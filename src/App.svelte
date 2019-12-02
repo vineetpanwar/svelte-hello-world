@@ -4,6 +4,7 @@
 	import TagLineGenerator from "./tagLineGenerator.svelte";
 	import DemoCompo from "./DemoCompo.svelte";
 	import Box from "./box.svelte";
+	import {onMount} from "svelte";
 	let vineet = "vineet";
 	let stringToShow = "";
 	let htmlToShow = "";
@@ -24,14 +25,50 @@
 		const starwarResponse = await fetch(`https://swapi.co/api/people/${randomNum}/`);
 		return await starwarResponse.json()
 	}
-	let promise = getStarWarInfo()
+	let promise = getStarWarInfo();
+	let textMessage;
+
+	function handleClickAlert(){
+		alert("hello i am "+ textMessage)
+	}
+
+	function handleInput(event){
+		textMessage = event.target.value;
+	}
+
+	let starCharacters=[];
+
+	onMount(async () => {
+		const starwarAPIResponse = await fetch(`https://swapi.co/api/people/`);
+		const starwarPeepsList = await starwarAPIResponse.json()
+		 starCharacters = starwarPeepsList.results;
+		 return () => {
+			 console.log('function destroyed')
+		 }
+	});
+
 </script>
+
+	<ul>
+		{#each starCharacters as {name,height,birth_year}}
+		<li>
+			<strong>{name}</strong>
+			(height: {height}cm,birth_year{birth_year})
+		</li>
+		{:else}
+		<h3>Loading...</h3>
+		{/each}
+	</ul>
+
+	<h1>Introduce yourself</h1>
+	<input type="text" on:change={handleInput} />
+	<button on:click={handleClickAlert}>alert me</button>
 	{#await promise}
 	<h1>loading...</h1>
 	{:then character}
-	<h1>{character.name}</h1>
+	<h1>{character.name}</h1>									
 	{/await}
-
+	
 	<form>
 		<div class="username">
 			<label for="username">Enter your username:</label>
