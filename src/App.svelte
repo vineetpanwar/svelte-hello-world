@@ -8,7 +8,30 @@
 	let stringToShow = "";
 	let htmlToShow = "";
 	let bindChecked = false;
+	let counter = 0;
+	$: squared = counter ** 2;
+	const handleClick = () => {
+		counter ++;
+	}
+	let cities=[
+		{id:1,name:'banagalore'},
+		{id:2,name:'delhi'},
+		{id:3,name:'gurgaion'}
+	];
+
+	const getStarWarInfo = async() => {
+		const randomNum = Math.floor(Math.random() * 10) + 1;
+		const starwarResponse = await fetch(`https://swapi.co/api/people/${randomNum}/`);
+		return await starwarResponse.json()
+	}
+	let promise = getStarWarInfo()
 </script>
+	{#await promise}
+	<h1>loading...</h1>
+	{:then character}
+	<h1>{character.name}</h1>
+	{/await}
+
 	<form>
 		<div class="username">
 			<label for="username">Enter your username:</label>
@@ -28,6 +51,12 @@
 		<h1 transition:blur={{duration:1200,delay:100}}>okay,getting you in </h1>
 	{/if}
 
+	{#each cities as {name,id},index}
+		<li>{id}:{name}</li>
+	{/each}
+
+	<button on:click={handleClick}>Counter:{counter}</button>
+	<h1>the square of the counter is {squared}</h1>
 	<Box>
 	<h1 slot="header">Hello</h1>
 	<div slot="body">
