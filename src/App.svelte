@@ -1,10 +1,16 @@
 <script>
 	import {slide, fade ,blur} from "svelte/transition" 
+	import {onMount} from "svelte";
+	
 	import Surname from "./surname.svelte";
 	import TagLineGenerator from "./tagLineGenerator.svelte";
 	import DemoCompo from "./DemoCompo.svelte";
 	import Box from "./box.svelte";
-	import {onMount} from "svelte";
+	import Incrementor from "./Incrementor.svelte";
+	import Decrementor from "./Decrementor.svelte";
+	import {store} from '../store';
+	import Setter from './Setter.svelte'
+
 	let vineet = "vineet";
 	let stringToShow = "";
 	let htmlToShow = "";
@@ -47,8 +53,14 @@
 		 }
 	});
 
-</script>
+	let countValue ;
+	store.subscribe(value => (countValue = value));
 
+</script>
+	<h1>The count is {countValue}</h1>
+	<Incrementor />
+	<Decrementor />
+	<Setter />
 	<ul>
 		{#each starCharacters as {name,height,birth_year}}
 		<li>
