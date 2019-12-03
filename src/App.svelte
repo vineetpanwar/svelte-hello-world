@@ -1,6 +1,8 @@
 <script>
 	import {slide, fade ,blur} from "svelte/transition" 
-	import {onMount} from "svelte";
+	import {onMount,onDestroy} from "svelte";
+	import {tweened} from "svelte/motion";
+	import {bounceInOut} from "svelte/easing";
 	
 	import Surname from "./surname.svelte";
 	import TagLineGenerator from "./tagLineGenerator.svelte";
@@ -9,7 +11,7 @@
 	import Incrementor from "./Incrementor.svelte";
 	import Decrementor from "./Decrementor.svelte";
 	import {store} from '../store';
-	import Setter from './Setter.svelte'
+	import Setter from './Setter.svelte';
 
 	let vineet = "vineet";
 	let stringToShow = "";
@@ -54,9 +56,18 @@
 	});
 
 	let countValue ;
-	store.subscribe(value => (countValue = value));
+	const unSubscribeStore = store.subscribe(value => (countValue = value));
+	onDestroy(unSubscribeStore)
+
+	const progress = tweened(0,{
+		duration:3000,
+		easing:bounceInOut
+	});
 
 </script>
+<h1>Here is my health status</h1>
+<progress value={$progress}></progress>
+<button on:click={() => progress.set(1.0)}>Set my progress</button>
 	<h1>The count is {countValue}</h1>
 	<Incrementor />
 	<Decrementor />
@@ -128,5 +139,8 @@
 		font-size:50px;
 		color:blue;
 	}
-
+	progress{
+		display:block;
+		width:100%;
+	}
 </style>
